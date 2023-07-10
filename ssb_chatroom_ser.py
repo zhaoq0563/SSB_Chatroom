@@ -46,7 +46,8 @@ class Server(QDialog):
                 self.updateClientList()
             else:
                 self.chatHistory.append("[System] Invalid name. Refused to join.")
-        elif re.match(r'>>[a-zA-Z]{1,9} .*', message):
+        # elif re.match(r'>>[a-zA-Z]{1,9} .*', message):
+        elif re.match(r'[a-zA-Z]{1,9}: >>[a-zA-Z]{1,9} .*', message):
             self.privateMessage(message, clientConnection)
         else:
             matchObj = re.match(r'[a-zA-Z]{1,9}: .*', message)
@@ -68,29 +69,29 @@ class Server(QDialog):
 
     def privateMessage(self, message:str, sender):
         # Send the message to private receiver
+        message = message[message.find(": ")+2:]
         index = message.find(" ")
+        fromname = [name for name in self.clients if self.clients[name] == sender][0]
         toname = message[2:index]
         message = message[index+1:]
         info = ""
         for c in self.clients:
             if c == toname:
-                self.clients[c].write(message.encode())
+                self.clients[c].write(("From " + fromname + ": " + message).encode())
                 self.clients[c].flush()
                 break
         else:
             info = "[Failed] "
 
         # Show the message in chat history
-        index = message.find(":")
-        fromname = message[:index]
-        local_history = info + fromname + " -> " + toname + ":" + message[index+1:]
+        local_history = info + fromname + " -> " + toname + ": " + message
         self.chatHistory.append(local_history)
 
         # Send the message back to sender as chat history
         if info == "[Failed] ":
             message = "[Failed] No " + toname + " found!"
         else:
-            message = "To " + toname + ": " + message[index+1:]
+            message = "To " + toname + ": " + message
         sender.write(message.encode())
         sender.flush()
 

@@ -15,7 +15,7 @@ class Client(QDialog):
         
         self.name, ok = QInputDialog.getText(self, "Client Name", "Enter your name:")
         if ok:
-            self.tcpSocket.connectToHost('192.168.0.108', 8888)
+            self.tcpSocket.connectToHost('127.0.0.1', 8888)
             self.tcpSocket.waitForConnected()
             self.tcpSocket.write(("Name: " + self.name).encode())
             self.tcpSocket.flush()
@@ -41,11 +41,11 @@ class Client(QDialog):
 
     def sendMessage(self):
         message = self.messageInput.text()
-        if re.match(r'>>[a-zA-Z]{1,9} .*', message):
-            index = message.find(" ")
-            message = message[:index+1] + self.name + ": " + message[index+1:]
-        else:
-            message = self.name + ": " + message
+        # if re.match(r'>>[a-zA-Z]{1,9} .*', message):
+            # index = message.find(" ")
+            # message = message[:index+1] + self.name + ": " + message[index+1:]
+        # else:
+        message = self.name + ": " + message
         self.tcpSocket.write(message.encode())
         self.tcpSocket.flush()
         self.messageInput.clear()
