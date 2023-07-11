@@ -15,7 +15,7 @@ class Client(QDialog):
         
         self.name, ok = QInputDialog.getText(self, "Client Name", "Enter your name:")
         if ok:
-            self.tcpSocket.connectToHost('127.0.0.1', 8888)
+            self.tcpSocket.connectToHost('192.168.0.108', 8888)
             self.tcpSocket.waitForConnected()
             self.tcpSocket.write(("Name: " + self.name).encode())
             self.tcpSocket.flush()
